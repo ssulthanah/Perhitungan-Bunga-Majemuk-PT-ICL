@@ -1,12 +1,21 @@
-
-selangwaktu = [{"Tahunan" : 12}, {"Tengah Tahunan" : 6}, {"Kuartal" : 3}, {"Bulanan" : 1}]
+userpass= {'pticl':'123'}
+userid=input("Masukkan username:" ) 
+password=input("Masukkan password: ")
+if userid in userpass and password==userpass[userid]:
+    print ("Login berhasil\n")
+else:
+    print ("Login gagal")
+    quit()
 
 #input data
 saldopokok = int(input("Masukkan Saldo Pokok: "))
 sukubunga = float(input("Masukkan Suku Bunga: "))
 lamainvestasi = int(input("Masukkan Lama Investasi (tahun): "))
+
 #menampilkan selang waktu
+print ('\n Berikut ini adalah pilihan selangwaktu:')
 print("\nJenis Selang Waktu: ")
+selangwaktu = [{"Tahunan" : 12}, {"Tengah Tahunan" : 6}, {"Kuartal" : 3}, {"Bulanan" : 1}]
 i=0
 for i, item in enumerate(selangwaktu, start=1):
     for key, value in item.items():
