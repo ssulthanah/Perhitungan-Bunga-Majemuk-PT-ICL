@@ -1,70 +1,89 @@
 import time
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 selangwaktu = ["Tahunan", "Tengah Tahunan", "Kuartal", "Bulanan"]
 saldototal = []
-bungatotal = []
+bungatotal = [0]
+data_investasi = []
+data_investasi2= [0]
+data_akrual=[]
+saldo0 = []
 
 def akrualnormal (n):
     x = (1+(sb/n))
     akrualnormal = (saldopokok*(x**(n*lamainvestasi)))
     print("="*50)
     print("Jumlah Akrual\t\t: Rp", akrualnormal)
+    data_akrual.append(akrualnormal)
 
 def akrualbulanan (n):
     x = (1+(sb/n))
     akrualbulanan = (saldopokok*(x**(n*lamainvestasi)))+((kb*(((1+(sb/12))**(12*lamainvestasi))-1))/(sb/12))
     print("="*50)
     print("Jumlah Akrual\t\t: Rp", akrualbulanan)
+    data_akrual.append(akrualbulanan)
 
 def perhitungan_normal (n):
     perulangan = 1
-    b=1
     if perulangan == 1:
         bunga1= bungaperiode/n
-        saldo1 = saldopokok+bunga1
-        print("Saldo Periode 0","\t: Rp", saldopokok)
-        print("Bunga Periode", b, "\t: Rp", bunga1, "\nSaldo Periode", b, "\t: Rp", saldo1)
+        saldo1 = float(saldopokok)+bunga1
+        bungatotal.append(bunga1)
+        saldototal.append(saldo1)
         bungaakhir = bunga1
         perulangan+=1
+        data_investasi.append(saldo1)
+        data_investasi2.append(bunga1)
     while perulangan<=lamainvestasi*n:
         bunganext=(saldo1*sb)/n
         saldo1=saldo1+bunganext
-        b+=1
-        print("Bunga Periode", b, "\t: Rp", bunganext, "\nSaldo Periode", b, "\t: Rp", saldo1)
+        saldototal.append(saldo1)
+        bungatotal.append(bunganext)
         bungaakhir+=bunganext
         perulangan+=1
+        data_investasi.append(saldo1)
+        data_investasi2.append(bunganext)
     if perulangan>lamainvestasi*n:
-        akrualnormal (1)
-        saldototal.append(saldo1)
-        bungatotal.append(bungaakhir)
+        data1={'Bunga Per Periode' : bungatotal, 'Saldo Per Periode' : saldototal}
+        df=pd.DataFrame(data1)
+        print(df)
+        akrualnormal (n)
         persentase=(bungaakhir/saldopokok)*100
         print("Bunga Akhir Tahun\t: Rp",bungaakhir, "\nPersentase Keuntungan\t: ", persentase, "%")
         print("-"*50)
 
+
 def perhitungan_bulanan (n):
     perulangan = 1
-    b=1
     setoran = kb*12
     if perulangan == 1:
         bunga2 = (bungaperiode+setoran)/n
-        saldo2 = saldopokok+bunga2
-        print("Saldo Periode 0","\t: Rp", saldopokok)
-        print("Bunga Periode", b, "\t: Rp", bunga2, "\nSaldo Periode", b, "\t: Rp", saldo2)
+        saldo2 = float(saldopokok)+bunga2
+        bungatotal.append(bunga2)
+        saldototal.append(saldo2)
         bungaakhir2 = bunga2
         perulangan+=1
+        data_investasi.append(saldo2)
+        data_investasi2.append(bunga2)
     while perulangan <= lamainvestasi*n:
         bunganext2 = ((saldo2*sb)+setoran)/n
         saldo2= saldo2+bunganext2
-        b+=1
-        print("Bunga Periode", b, "\t: Rp", bunganext2, "\nSaldo Periode", b, "\t: Rp", saldo2)
+        saldototal.append(saldo2)
+        bungatotal.append(bunganext2)
         bungaakhir2 += bunganext2
         perulangan+=1
+        data_investasi.append(saldo2)
+        data_investasi2.append(bunganext2)
     if perulangan > lamainvestasi*n:
-        akrualbulanan (4)
-        saldototal.append(saldo2)
-        bungatotal.append(bungaakhir2) 
+        data1={'Bunga Per Periode' : bungatotal, 'Saldo Per Periode' : saldototal}
+        df=pd.DataFrame(data1)
+        print(df)
+        akrualbulanan (n)
         persentase=(bungaakhir2/saldopokok)*100
         print("Bunga Akhir Tahun\t: Rp",bungaakhir2, "\nPersentase Keuntungan\t: ", persentase, "%")
         print("-"*50)
+
 
 #login
 list_user = ["pticl.pticl123"]
@@ -86,11 +105,38 @@ if masuk ==3 and login not in list_user :
 
 #input data
 x = True
+perulangan = 1
 while x == True:
-    perulangan=1
-    saldopokok = float(input("Masukkan Saldo Pokok\t\t: Rp"))
-    sukubunga = float(input("Masukkan Suku Bunga\t\t: "))
-    lamainvestasi = int(input("Masukkan Lama Investasi (tahun)\t: "))
+    while True:
+        try:
+            saldopokok = float(input("Masukkan Saldo Pokok\t\t: Rp"))
+            saldototal.append(saldopokok)
+            saldo0.append(saldopokok)
+            if perulangan == 1:
+                data_investasi.append(saldo0[0])
+            else:
+                break
+        except:
+            print('Harap Masukkan Angka')
+            print("")
+        else:
+            break
+    while True:
+        try:
+            sukubunga = float(input("Masukkan Suku Bunga\t\t: "))
+        except:
+            print('Harap Masukkan Angka')
+            print("")
+        else:
+            break
+    while True:
+        try:
+            lamainvestasi = int(input("Masukkan Lama Investasi (tahun)\t: "))
+        except:
+            print('Harap Masukkan Angka')
+            print("")
+        else:
+            break
 
     #menampilkan selang waktu
     print("\nJenis Selang Waktu: ")
@@ -102,13 +148,19 @@ while x == True:
         break
     
     #pilih selang waktu
-    pilihan = int(input("Pilih selang waktu: "))
-    print("Selang Waktu yang diplih: ", selangwaktu[pilihan-1], "\n")
-    b=1
+    while True:
+        try:
+            pilihan = int(input("Pilih selang waktu: "))
+        except:
+            print('Harap Masukkan Angka 1/2/3/4')
+            print("")
+        else:
+            break
+    print("Selang Waktu yang dipilih: ", selangwaktu[pilihan-1], "\n")
 
     #perhitungan
-    sb=sukubunga/100
-    bungaperiode = saldopokok*sb
+    sb=(float(sukubunga)/100)
+    bungaperiode = (float(saldopokok)*sb)
     perhitungan=input("Apakah akan melakukan perhitungan investasi bunga majemuk normal? yes/no: ").lower()
     if perhitungan=="yes":
         print("-"*50)
@@ -116,15 +168,23 @@ while x == True:
         print("-"*50)
         while pilihan==1:
             perhitungan_normal (1)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*1)+1]
             break
         while pilihan == 2:
             perhitungan_normal (2)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*2)+1]
             break
         while pilihan == 3:
             perhitungan_normal (4)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*4)+1]
             break
         while pilihan == 4:
             perhitungan_normal (12)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*12)+1]
             break
         perulangan+=1
     else:
@@ -134,15 +194,23 @@ while x == True:
         print("-"*50)
         while pilihan == 1:
             perhitungan_bulanan (1)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*1)+1]
             break
         while pilihan == 2:
             perhitungan_bulanan (2)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*2)+1]
             break
         while pilihan == 3:
             perhitungan_bulanan (4)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*4)+1]
             break
         while pilihan == 4:
             perhitungan_bulanan (12)
+            saldototal.clear()
+            del bungatotal[1:(lamainvestasi*12)+1]
             break  
         perulangan+=1
     perhitungan=input("\nApakah akan melakukan perhitungan investasi bunga majemuk lagi? yes/no: ").lower()    
@@ -155,7 +223,23 @@ while x == True:
         while perulangan > 1:
             output=input("Ingin Tampilkan Data Kumulatif? (yes/no): ").lower()
             if output == "yes":
-                print("Saldo Total: Rp",sum(saldototal),"\nBunga Total: Rp",sum(bungatotal))
+                print("-"*50)
+                print(" "*12, "DATA KUMULATIF INVESTASI")
+                print("-"*50)
+                data={'Saldo Per Periode' : data_investasi, 'Bunga Per Periode' : data_investasi2}
+                df=pd.DataFrame(data)
+                print (df)
+                print("-"*50)
+                print("Saldo Total\t\t: Rp","\nBunga Total\t\t: Rp",sum(data_investasi2))
+                x = np.arange(0,30,1)
+                y1 = data_investasi
+                y2 = data_investasi2
+                plt.title('Data Kumulatif Investasi')
+                plt.xlabel("Periode")
+                plt.axis([0, 30, 0, 1000000000])
+                plt.plot(x,y1, marker='o', c="orange")
+                plt.plot(x,y2, marker='o', c="green")
+                plt.show()
                 break
             else:
                 break
